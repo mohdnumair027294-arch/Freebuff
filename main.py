@@ -360,6 +360,93 @@ async def get_captions(subject_id: str, detail_path: str, se: int = 1, ep: int =
     captions = inner.get("captions", []) if isinstance(inner, dict) else inner
     return {"subject_id": subject_id, "se": se, "ep": ep, "count": len(captions), "captions": captions}
 
+@app.get("/ranking")
+async def get_ranking():
+    """Simulate rankings using HOT sort across movies, TV, and animation."""
+    all_items = []
+    seen = set()
+    for tab_id, label in [(2, "Movies"), (5, "TV Series"), (8, "Animation")]:
+        url = f"{API_BASE}/subject/filter"
+        payload = {"tabId": tab_id, "filter": {"sort": "HOT", "genre": "ALL", "country": "ALL", "year": "ALL", "language": "ALL"}, "page": 1, "perPage": 30}
+        data = await _make_request(url, method="POST", payload=payload)
+        inner = data.get("data", {})
+        raw_items = inner.get("items", inner.get("subjects", []))
+        for sub in raw_items:
+            slug = sub.get("detailPath")
+            if slug and slug not in seen:
+                seen.add(slug)
+                cover = sub.get("cover") or {}
+                all_items.append({
+                    "name": sub.get("title"),
+                    "poster_url": cover.get("url", ""),
+                    "slug": slug,
+                    "subject_id": sub.get("subjectId"),
+                    "badge": sub.get("corner"),
+                    "rating": sub.get("imdbRatingValue"),
+                    "year": (sub.get("releaseDate") or "")[:4] if sub.get("releaseDate") else None,
+                    "category": label,
+                })
+    # Sort by rating descending
+    all_items.sort(key=lambda x: float(x.get("rating") or 0), reverse=True)
+    for i, item in enumerate(all_items):
+        item["rank"] = i + 1
+    return {"items": all_items[:50], "total": len(all_items)}
+
+
+@app.get("/home/banner")
+async def get_home_banner():
+    url = f"{API_BASE}/home?host=moviebox.ph"
+    data = await _make_request(url)
+    items = []
+    for op in data.get("data", {}).get("operatingList", []) or []:
+        if op.get("type") == "BANNER":
+            for item in op.get("banner", {}).get("items", []):
+                sub = item.get("subject") or {}
+                items.append({
+                    "name": item.get("title") or sub.get("title"),
+                    "poster_url": item.get("image", {}).get("url") or sub.get("cover", {}).get("url"),
+                    "slug": item.get("detailPath") or sub.get("detailPath"),
+                    "subject_id": sub.get("subjectId"),
+                    "badge": sub.get("corner"),
+                })
+    return {"items": items}
+
+
+@app.get("/home/sections")
+async def get_home_sections():
+    url = f"{API_BASE}/home?host=moviebox.ph"
+    data = await _make_request(url)
+    sections = []
+    for op in data.get("data", {}).get("operatingList", []) or []:
+        sections.append({
+            "type": op.get("type"),
+            "title": op.get("title", "Featured"),
+            "count": len(op.get("subjects", [])) or len(op.get("banner", {}).get("items", [])),
+        })
+    return {"sections": sections}
+
+
+@app.get("/home/trending")
+async def get_home_trending():
+    url = f"{API_BASE}/home?host=moviebox.ph"
+    data = await _make_request(url)
+    items = []
+    for op in data.get("data", {}).get("operatingList", []) or []:
+        title = op.get("title", "")
+        if "trending" in title.lower() or "hot" in title.lower():
+            for sub in op.get("subjects", []):
+                cover = sub.get("cover") or {}
+                items.append({
+                    "name": sub.get("title"),
+                    "poster_url": cover.get("url", ""),
+                    "slug": sub.get("detailPath"),
+                    "subject_id": sub.get("subjectId"),
+                    "badge": sub.get("corner"),
+                    "rating": sub.get("imdbRatingValue"),
+                })
+    return {"items": items}
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
