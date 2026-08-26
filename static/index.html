@@ -1271,17 +1271,19 @@ function renderEpisodes(episodes, seasons, subjectId, slug) {
       return '<button class="season-tab' + (i === 0 ? ' active' : '') + '" onclick="filterSeason(this,' + num + ')" data-season="' + num + '">Season ' + num + '</button>';
     }).join('');
 
+    const firstSeason = seasons[0].seasonNumber || seasons[0].number || 1;
     const episodeCards = episodes.map(ep => {
       const num = ep.episodeNumber || ep.number || ep.ep || '?';
       const dur = ep.duration || ep.durationText || '';
-      return '<div class="episode-card" onclick="startWatch(\'' + esc(subjectId) + '\',\'' + esc(slug) + '\',' + (ep.seasonNumber || 1) + ',' + num + ')" data-season="' + (ep.seasonNumber || 1) + '">' +
+      const epSeason = ep.seasonNumber || 1;
+      return '<div class="episode-card" style="' + (epSeason != firstSeason ? 'display:none;' : '') + '" onclick="startWatch(\'' + esc(subjectId) + '\',\'' + esc(slug) + '\',' + epSeason + ',' + num + ')" data-season="' + epSeason + '">' +
         '<div class="episode-num">' + num + '</div>' +
         '<div class="episode-info"><div class="episode-title">' + esc(ep.title || ep.name || 'Episode ' + num) + '</div>' +
         (dur ? '<div class="episode-duration">' + esc(dur) + '</div>' : '') +
         '</div><div class="episode-play-icon">▶</div></div>';
     }).join('');
 
-    return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3></div><div class="season-tabs" id="seasonTabs">' + seasonTabs + '</div><div class="episode-grid" id="episodeGrid">' + episodeCards + '</div></div>';
+    return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3><span style="color:var(--text-dim);font-size:0.85rem;">' + episodes.length + ' episodes · ' + seasons.length + ' seasons</span></div><div class="season-tabs" id="seasonTabs">' + seasonTabs + '</div><div class="episode-grid" id="episodeGrid">' + episodeCards + '</div></div>';
   }
 
   const episodeCards = episodes.map(ep => {
@@ -1294,7 +1296,7 @@ function renderEpisodes(episodes, seasons, subjectId, slug) {
       '</div><div class="episode-play-icon">▶</div></div>';
   }).join('');
 
-  return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3></div><div class="episode-grid">' + episodeCards + '</div></div>';
+  return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3><span style="color:var(--text-dim);font-size:0.85rem;">' + episodes.length + ' episodes</span></div><div class="episode-grid">' + episodeCards + '</div></div>';
 }
 
 function filterSeason(btn, season) {
