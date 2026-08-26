@@ -6,291 +6,457 @@
 <title>Freebuff - Watch Movies at Home</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --surface: #12121a;
-  --surface2: #1a1a26;
-  --border: #222233;
+  --bg: #08080d;
+  --surface: #111118;
+  --surface2: #1a1a24;
+  --surface3: #222230;
+  --border: #2a2a3a;
   --primary: #e50914;
   --primary-hover: #ff1a26;
+  --primary-glow: rgba(229,9,20,0.3);
   --accent: #4da6ff;
   --text: #e5e5e5;
-  --text-dim: #8a8a9a;
+  --text-dim: #7a7a8e;
   --text-bright: #ffffff;
   --gold: #f5c518;
+  --green: #46d369;
   --radius: 10px;
   --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-lg: 0 16px 64px rgba(0,0,0,0.7);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
 
-/* ── Nav ── */
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  display: flex; align-items: center; gap: 24px;
-  padding: 0 40px; height: 64px;
-  background: rgba(10,10,15,0.95);
-  transition: background 0.3s, border-color 0.3s;
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 48px; height: 68px;
+  background: linear-gradient(180deg, rgba(8,8,13,0.98) 0%, rgba(8,8,13,0.85) 100%);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
   border-bottom: 1px solid transparent;
-  will-change: background;
 }
 .nav.scrolled {
-  background: rgba(10,10,15,0.98);
+  background: rgba(8,8,13,0.98);
   border-bottom-color: var(--border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
 }
 .nav-logo {
-  font-size: 1.5rem; font-weight: 800; color: var(--primary);
-  text-decoration: none; letter-spacing: -1px; cursor: pointer;
+  font-size: 1.6rem; font-weight: 900; color: var(--primary);
+  letter-spacing: -1.5px; cursor: pointer; flex-shrink: 0;
+  transition: opacity var(--transition);
 }
-.nav-logo span { color: var(--text-bright); }
-.nav-links { display: flex; gap: 24px; margin-left: 20px; }
+.nav-logo:hover { opacity: 0.8; }
+.nav-logo span { color: var(--text-bright); font-weight: 700; }
+
+.nav-links { display: flex; gap: 4px; margin-left: 16px; }
 .nav-links a {
-  color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 500;
-  cursor: pointer; transition: color 0.2s;
+  color: var(--text-dim); font-size: 0.88rem; font-weight: 500;
+  padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  transition: color var(--transition), background var(--transition);
 }
-.nav-links a:hover, .nav-links a.active { color: var(--text-bright); }
-.nav-search { margin-left: auto; position: relative; display: flex; align-items: center; }
+.nav-links a:hover { color: var(--text-bright); background: rgba(255,255,255,0.06); }
+.nav-links a.active { color: var(--text-bright); background: rgba(255,255,255,0.1); }
+
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+.nav-search { position: relative; display: flex; align-items: center; }
 .nav-search input {
-  width: 0; padding: 0; border: none; background: transparent;
+  width: 0; padding: 0; border: 2px solid transparent; background: transparent;
   color: var(--text-bright); font-size: 0.9rem; outline: none;
-  transition: width 0.3s, padding 0.3s, background 0.3s;
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1), padding 0.35s, background 0.35s, border-color 0.35s;
+  border-radius: 10px;
 }
 .nav-search.active input {
-  width: 280px; padding: 10px 16px;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 8px;
+  width: 300px; padding: 10px 16px;
+  background: var(--surface2); border-color: var(--border);
 }
-.nav-search-btn {
-  background: none; border: none; color: var(--text-dim); cursor: pointer;
-  font-size: 1.2rem; padding: 8px; transition: color 0.2s;
-}
-.nav-search-btn:hover { color: var(--text-bright); }
+.nav-search.active input:focus { border-color: var(--primary); }
 
-/* ── Search Dropdown ── */
-.search-dropdown {
-  position: absolute; top: 48px; right: 0; width: 400px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-  display: none; overflow: hidden; z-index: 1001;
+.icon-btn {
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  font-size: 1.3rem; padding: 10px; border-radius: 10px;
+  transition: color var(--transition), background var(--transition);
+  display: flex; align-items: center; justify-content: center;
 }
-.search-dropdown.show { display: block; }
+.icon-btn:hover { color: var(--text-bright); background: rgba(255,255,255,0.08); }
+
+.nav-fav-count {
+  position: absolute; top: 4px; right: 4px; width: 16px; height: 16px;
+  background: var(--primary); color: white; font-size: 0.6rem; font-weight: 700;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+/* Hamburger */
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
+.hamburger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: var(--transition); }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* Mobile menu overlay */
+.mobile-menu {
+  display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(8,8,13,0.98); padding: 80px 32px 32px;
+  flex-direction: column; gap: 8px;
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.mobile-menu.open { display: flex; opacity: 1; transform: translateY(0); }
+.mobile-menu a {
+  font-size: 1.3rem; font-weight: 600; color: var(--text-dim);
+  padding: 16px 0; border-bottom: 1px solid var(--border);
+  transition: color var(--transition);
+}
+.mobile-menu a:hover, .mobile-menu a.active { color: var(--text-bright); }
+
+/* Search dropdown */
+.search-dropdown {
+  position: absolute; top: 52px; right: 0; width: 420px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+  display: none; overflow: hidden; z-index: 1001;
+  max-height: 400px; overflow-y: auto;
+}
+.search-dropdown.show { display: block; animation: dropIn 0.2s ease; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 .search-item {
   display: flex; align-items: center; gap: 14px; padding: 12px 16px;
   cursor: pointer; transition: background 0.15s;
 }
 .search-item:hover { background: var(--surface2); }
-.search-item-info { flex: 1; }
-.search-item-title { font-size: 0.9rem; font-weight: 600; color: var(--text-bright); }
+.search-item-thumb {
+  width: 44px; height: 60px; border-radius: 6px; object-fit: cover;
+  background: var(--surface2); flex-shrink: 0;
+}
+.search-item-info { flex: 1; min-width: 0; }
+.search-item-title { font-size: 0.9rem; font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search-item-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
-.search-empty { padding: 24px; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+.search-empty { padding: 32px; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 
-/* ── Main ── */
-#app { padding-top: 64px; min-height: 100vh; }
+/* ═══════════════════════════════════════════
+   MAIN
+   ═══════════════════════════════════════════ */
+#app { padding-top: 68px; min-height: 100vh; }
 
-/* ── Hero ── */
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
 .hero {
-  position: relative; height: 70vh; min-height: 500px; max-height: 700px;
-  overflow: hidden; contain: layout style;
+  position: relative; height: 75vh; min-height: 520px; max-height: 750px;
+  overflow: hidden;
 }
 .hero-slide {
   position: absolute; inset: 0; opacity: 0;
-  transition: opacity 0.8s ease; will-change: opacity;
+  transition: opacity 1s ease; will-change: opacity;
 }
 .hero-slide.active { opacity: 1; }
 .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
 .hero-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(10,10,15,0.92) 0%, rgba(10,10,15,0.6) 50%, transparent 100%),
-              linear-gradient(to top, var(--bg) 0%, transparent 40%);
+  background:
+    linear-gradient(to right, rgba(8,8,13,0.95) 0%, rgba(8,8,13,0.7) 35%, rgba(8,8,13,0.2) 65%, transparent 100%),
+    linear-gradient(to top, var(--bg) 0%, rgba(8,8,13,0.3) 30%, transparent 60%),
+    linear-gradient(to bottom, rgba(8,8,13,0.4) 0%, transparent 20%);
   pointer-events: none;
 }
 .hero-content {
-  position: absolute; bottom: 15%; left: 40px;
-  max-width: 550px; z-index: 2;
+  position: absolute; bottom: 18%; left: 48px;
+  max-width: 580px; z-index: 2;
 }
 .hero-badge {
-  display: inline-block; padding: 4px 12px; border-radius: 4px;
+  display: inline-block; padding: 5px 14px; border-radius: 6px;
   background: var(--primary); color: white; font-size: 0.7rem;
-  font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-  margin-bottom: 12px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 14px; box-shadow: 0 2px 12px var(--primary-glow);
 }
 .hero-title {
-  font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800;
-  color: var(--text-bright); line-height: 1.1; margin-bottom: 12px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900;
+  color: var(--text-bright); line-height: 1.08; margin-bottom: 14px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  letter-spacing: -0.5px;
 }
 .hero-meta {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-  font-size: 0.85rem; color: var(--text-dim);
+  display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+  font-size: 0.88rem; color: var(--text-dim);
 }
 .hero-rating { color: var(--gold); font-weight: 700; }
-.hero-actions { display: flex; gap: 12px; }
+.hero-dot-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--text-dim); }
+.hero-desc {
+  font-size: 0.92rem; color: var(--text-dim); line-height: 1.6;
+  margin-bottom: 24px; display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
 .btn-play {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 32px; background: var(--primary); color: white;
-  border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
-  cursor: pointer; transition: background 0.2s, transform 0.2s;
-  will-change: transform;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 36px; background: var(--primary); color: white;
+  border: none; border-radius: 12px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: all var(--transition);
+  box-shadow: 0 4px 20px var(--primary-glow);
 }
-.btn-play:hover { background: var(--primary-hover); transform: scale(1.03); }
-.btn-info {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px; background: rgba(255,255,255,0.15);
-  color: var(--text-bright); border: none; border-radius: 8px;
-  font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+.btn-play:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px; background: rgba(255,255,255,0.1);
+  color: var(--text-bright); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+  backdrop-filter: blur(8px);
 }
-.btn-info:hover { background: rgba(255,255,255,0.25); }
+.btn-secondary:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
 
 .hero-indicators {
-  position: absolute; bottom: 30px; right: 40px; z-index: 2;
-  display: flex; gap: 8px;
+  position: absolute; bottom: 32px; right: 48px; z-index: 2;
+  display: flex; gap: 8px; align-items: center;
 }
 .hero-dot {
   width: 10px; height: 10px; border-radius: 50%;
-  background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s;
+  background: rgba(255,255,255,0.25); cursor: pointer;
+  transition: all 0.4s;
 }
-.hero-dot.active { background: var(--primary); width: 28px; border-radius: 5px; }
+.hero-dot.active { background: var(--primary); width: 32px; border-radius: 5px; box-shadow: 0 0 12px var(--primary-glow); }
 
-/* ── Sections ── */
-.sections { padding: 0 40px 60px; }
-.section { margin-bottom: 48px; contain: layout style; content-visibility: auto; contain-intrinsic-size: 0 400px; }
+/* ═══════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════ */
+.sections { padding: 0 48px 60px; }
+.section {
+  margin-bottom: 52px;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
+}
 .section-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
-.section-title { font-size: 1.3rem; font-weight: 700; color: var(--text-bright); }
+.section-title {
+  font-size: 1.35rem; font-weight: 800; color: var(--text-bright);
+  letter-spacing: -0.3px;
+}
+.section-see-all {
+  font-size: 0.85rem; color: var(--text-dim); cursor: pointer;
+  transition: color var(--transition);
+}
+.section-see-all:hover { color: var(--primary); }
 
-/* ── Movie Grid ── */
+/* ═══════════════════════════════════════════
+   MOVIE CARDS — NEW DESIGN
+   ═══════════════════════════════════════════ */
 .movie-row {
-  display: flex; gap: 16px; overflow-x: auto;
-  scroll-behavior: smooth; padding-bottom: 8px;
+  display: flex; gap: 14px; overflow-x: auto;
+  scroll-behavior: smooth; padding: 8px 4px 12px;
   -ms-overflow-style: none; scrollbar-width: none;
 }
 .movie-row::-webkit-scrollbar { display: none; }
 
 .movie-card {
-  flex: 0 0 200px; cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative; contain: layout style;
+  flex: 0 0 180px; cursor: pointer;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.1), box-shadow 0.3s;
   will-change: transform;
-  height: 300px;
 }
-.movie-card:hover { transform: scale(1.08); z-index: 10; }
+.movie-card:hover {
+  transform: scale(1.08) translateY(-8px);
+  z-index: 10;
+  box-shadow: var(--shadow-lg);
+}
+
 .movie-card-poster {
-  width: 100%; height: 100%; object-fit: cover;
-  border-radius: var(--radius); background: var(--surface2);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  display: block;
+  width: 100%; aspect-ratio: 2/3; object-fit: cover;
+  display: block; background: var(--surface2);
+  transition: filter 0.3s;
 }
-.movie-card-badge {
-  position: absolute; top: 8px; left: 8px;
-  padding: 3px 8px; border-radius: 4px;
-  background: var(--primary); color: white;
-  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+.movie-card:hover .movie-card-poster { filter: brightness(0.6); }
+
+.movie-card-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 16px 14px;
+  opacity: 0; transition: opacity 0.3s;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
 }
-.movie-card-info { padding: 10px 2px 0; }
+.movie-card:hover .movie-card-overlay { opacity: 1; }
+
+.movie-card-play {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.8);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--primary); display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: white; opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+.movie-card:hover .movie-card-play { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
 .movie-card-title {
-  font-size: 0.85rem; font-weight: 600; color: var(--text-bright);
+  font-size: 0.82rem; font-weight: 700; color: var(--text-bright);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
 }
 .movie-card-meta {
-  font-size: 0.75rem; color: var(--text-dim); margin-top: 3px;
+  font-size: 0.72rem; color: var(--text-dim);
   display: flex; align-items: center; gap: 8px;
 }
-.movie-card-rating { color: var(--gold); font-weight: 600; }
+.movie-card-rating { color: var(--gold); font-weight: 700; }
+.movie-card-badge {
+  position: absolute; top: 10px; left: 10px;
+  padding: 4px 10px; border-radius: 6px;
+  background: var(--primary); color: white;
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; z-index: 2;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
 
-/* ── Skeleton ── */
+.movie-card-fav {
+  position: absolute; top: 10px; right: 10px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  border: none; color: var(--text-dim); font-size: 0.9rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: all 0.2s; z-index: 3;
+}
+.movie-card:hover .movie-card-fav { opacity: 1; }
+.movie-card-fav:hover { background: rgba(229,9,20,0.8); color: white; transform: scale(1.1); }
+.movie-card-fav.active { opacity: 1; background: var(--primary); color: white; }
+
+/* ═══════════════════════════════════════════
+   SKELETON
+   ═══════════════════════════════════════════ */
 .loading-skeleton {
-  background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius);
 }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.skeleton-card { flex: 0 0 200px; height: 300px; }
-.skeleton-card .movie-card-poster { width: 100%; height: 100%; border-radius: var(--radius); }
 
-/* ── Detail Page ── */
+/* ═══════════════════════════════════════════
+   DETAIL PAGE
+   ═══════════════════════════════════════════ */
 .detail-page { min-height: 100vh; padding: 0; }
-.detail-backdrop { position: relative; height: 60vh; min-height: 400px; }
+.detail-backdrop { position: relative; height: 65vh; min-height: 420px; overflow: hidden; }
 .detail-backdrop img { width: 100%; height: 100%; object-fit: cover; }
 .detail-backdrop-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(10,10,15,0.9) 0%, rgba(10,10,15,0.5) 60%, transparent 100%),
-              linear-gradient(to top, var(--bg) 0%, transparent 50%);
+  background:
+    linear-gradient(to right, rgba(8,8,13,0.92) 0%, rgba(8,8,13,0.5) 55%, transparent 100%),
+    linear-gradient(to top, var(--bg) 0%, rgba(8,8,13,0.3) 45%, transparent 100%);
   pointer-events: none;
 }
 .detail-content {
-  position: absolute; bottom: 0; left: 40px; right: 40px;
-  display: flex; gap: 32px; align-items: flex-end; z-index: 2;
+  position: absolute; bottom: 0; left: 48px; right: 48px;
+  display: flex; gap: 36px; align-items: flex-end; z-index: 2;
 }
+.detail-poster-wrap { flex-shrink: 0; position: relative; }
 .detail-poster {
-  width: 200px; border-radius: var(--radius-lg);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6); flex-shrink: 0;
+  width: 200px; border-radius: var(--radius-xl);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.1);
 }
-.detail-info { flex: 1; padding-bottom: 20px; }
+.detail-info { flex: 1; padding-bottom: 24px; }
 .detail-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
-  color: var(--text-bright); margin-bottom: 8px;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 900;
+  color: var(--text-bright); margin-bottom: 10px;
+  letter-spacing: -0.5px; line-height: 1.1;
 }
 .detail-meta {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
-  margin-bottom: 16px; font-size: 0.9rem; color: var(--text-dim);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-bottom: 18px; font-size: 0.88rem; color: var(--text-dim);
 }
 .detail-rating { color: var(--gold); font-weight: 700; font-size: 1rem; }
 .detail-genre {
-  padding: 3px 10px; background: var(--surface2);
-  border-radius: 4px; font-size: 0.8rem;
+  padding: 4px 12px; background: rgba(255,255,255,0.08);
+  border-radius: 6px; font-size: 0.78rem; font-weight: 500;
 }
 .detail-desc {
-  font-size: 0.95rem; color: var(--text-dim); line-height: 1.7;
-  margin-bottom: 24px; max-width: 650px;
+  font-size: 0.92rem; color: var(--text-dim); line-height: 1.75;
+  margin-bottom: 28px; max-width: 680px;
 }
-.detail-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.detail-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
-.detail-episodes { padding: 40px; }
-.episodes-title {
-  font-size: 1.2rem; font-weight: 700; color: var(--text-bright);
-  margin-bottom: 20px;
+.btn-fav-detail {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 24px; background: rgba(255,255,255,0.08);
+  color: var(--text-dim); border: 1px solid var(--border);
+  border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
 }
-.season-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.btn-fav-detail:hover { background: rgba(229,9,20,0.15); border-color: var(--primary); color: var(--primary); }
+.btn-fav-detail.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* Episodes */
+.detail-episodes { padding: 48px; }
+.episodes-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.episodes-title { font-size: 1.3rem; font-weight: 800; color: var(--text-bright); }
+.season-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
 .season-tab {
-  padding: 8px 20px; border-radius: 8px; border: 1px solid var(--border);
+  padding: 10px 22px; border-radius: 10px; border: 1px solid var(--border);
   background: transparent; color: var(--text-dim);
-  font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition);
 }
 .season-tab:hover { border-color: var(--text-dim); color: var(--text); }
-.season-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+.season-tab.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 2px 12px var(--primary-glow); }
+
 .episode-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px;
 }
 .episode-card {
-  display: flex; gap: 14px; padding: 14px;
+  display: flex; gap: 16px; padding: 16px;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s, background 0.2s;
+  border-radius: var(--radius-lg); cursor: pointer;
+  transition: all var(--transition);
 }
-.episode-card:hover { border-color: var(--primary); background: var(--surface2); }
+.episode-card:hover {
+  border-color: var(--primary); background: var(--surface2);
+  transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
 .episode-num {
-  width: 40px; height: 40px; border-radius: 8px;
+  width: 44px; height: 44px; border-radius: 10px;
   background: var(--surface2); display: flex;
   align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.9rem; color: var(--text-dim); flex-shrink: 0;
+  font-weight: 800; font-size: 0.95rem; color: var(--text-dim); flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
 }
+.episode-card:hover .episode-num { background: var(--primary); color: white; }
 .episode-info { flex: 1; min-width: 0; }
 .episode-title {
   font-size: 0.9rem; font-weight: 600; color: var(--text-bright);
@@ -298,78 +464,207 @@ body {
 }
 .episode-duration { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
 .episode-play-icon {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 36px; height: 36px; border-radius: 50%;
   background: var(--primary); display: flex;
   align-items: center; justify-content: center;
-  font-size: 0.7rem; color: white; flex-shrink: 0; align-self: center;
+  font-size: 0.75rem; color: white; flex-shrink: 0; align-self: center;
+  opacity: 0; transition: opacity var(--transition);
+  box-shadow: 0 2px 10px var(--primary-glow);
 }
+.episode-card:hover .episode-play-icon { opacity: 1; }
 
-/* ── Player ── */
+/* ═══════════════════════════════════════════
+   PLAYER
+   ═══════════════════════════════════════════ */
 .player-page { min-height: 100vh; background: #000; }
 .player-header {
   display: flex; align-items: center; gap: 16px;
-  padding: 16px 24px; background: var(--surface);
+  padding: 16px 28px; background: rgba(17,17,24,0.95);
   border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
 }
 .player-back {
   background: none; border: none; color: var(--text-dim);
-  font-size: 1.4rem; cursor: pointer; padding: 4px; transition: color 0.2s;
+  font-size: 1.5rem; cursor: pointer; padding: 6px; border-radius: 8px;
+  transition: all var(--transition);
 }
-.player-back:hover { color: var(--text-bright); }
+.player-back:hover { color: var(--text-bright); background: rgba(255,255,255,0.08); }
 .player-title { font-size: 1rem; font-weight: 600; color: var(--text-bright); }
 .player-video-wrap {
-  position: relative; width: 100%; max-height: 80vh;
+  position: relative; width: 100%; max-height: 82vh;
   background: #000; display: flex; align-items: center; justify-content: center;
 }
-.player-video-wrap video { width: 100%; max-height: 80vh; }
-.player-info-bar { padding: 20px 24px; background: var(--surface); }
-.player-info-title {
-  font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 8px;
-}
-.player-quality-list { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.player-video-wrap video { width: 100%; max-height: 82vh; outline: none; }
+.player-info-bar { padding: 24px 28px; background: var(--surface); }
+.player-info-title { font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 12px; }
+.player-quality-list { display: flex; gap: 10px; flex-wrap: wrap; }
 .quality-chip {
-  padding: 6px 16px; border-radius: 6px;
+  padding: 8px 20px; border-radius: 8px;
   border: 1px solid var(--border); background: transparent;
-  color: var(--text-dim); font-size: 0.8rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
+  color: var(--text-dim); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
 }
 .quality-chip:hover { border-color: var(--accent); color: var(--accent); }
 .quality-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
 
-/* ── Search/Page ── */
-.search-page { padding: 40px; }
-.search-page-title { font-size: 1.8rem; font-weight: 800; color: var(--text-bright); margin-bottom: 8px; }
-.search-page-sub { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 30px; }
-.search-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px;
+/* ═══════════════════════════════════════════
+   SEARCH / CATEGORY PAGE
+   ═══════════════════════════════════════════ */
+.page-header { padding: 48px 48px 0; }
+.page-title { font-size: 2rem; font-weight: 900; color: var(--text-bright); margin-bottom: 6px; letter-spacing: -0.5px; }
+.page-subtitle { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 24px; }
+
+.genre-filters {
+  display: flex; gap: 10px; padding: 0 48px 32px; flex-wrap: wrap;
+}
+.genre-chip {
+  padding: 8px 18px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-dim); font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+}
+.genre-chip:hover { border-color: var(--text-dim); color: var(--text); }
+.genre-chip.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+.content-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 28px; padding: 0 48px 60px;
 }
 
-/* ── Empty ── */
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════ */
 .empty-state {
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; padding: 80px 40px; text-align: center;
+  justify-content: center; padding: 100px 40px; text-align: center;
 }
-.empty-state-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
-.empty-state-title { font-size: 1.2rem; font-weight: 700; color: var(--text-bright); margin-bottom: 8px; }
-.empty-state-desc { font-size: 0.9rem; color: var(--text-dim); }
+.empty-state-icon { font-size: 3.5rem; margin-bottom: 18px; opacity: 0.5; }
+.empty-state-title { font-size: 1.3rem; font-weight: 700; color: var(--text-bright); margin-bottom: 8px; }
+.empty-state-desc { font-size: 0.9rem; color: var(--text-dim); max-width: 360px; }
 
-/* ── Responsive ── */
+/* ═══════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════ */
+.toast-container {
+  position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.toast {
+  padding: 14px 24px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 12px;
+  color: var(--text-bright); font-size: 0.88rem; font-weight: 500;
+  box-shadow: var(--shadow);
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+  display: flex; align-items: center; gap: 10px;
+}
+.toast-icon { font-size: 1.1rem; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
+
+/* ═══════════════════════════════════════════
+   FAVORITES PAGE
+   ═══════════════════════════════════════════ */
+.fav-count-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px;
+  background: var(--primary); color: white; font-size: 0.65rem;
+  font-weight: 700; border-radius: 10px; margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  padding: 48px; border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 32px;
+}
+.footer-brand { font-size: 1.3rem; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+.footer-brand span { color: var(--text-bright); }
+.footer-text { font-size: 0.82rem; color: var(--text-dim); max-width: 300px; line-height: 1.6; }
+.footer-links { display: flex; gap: 40px; }
+.footer-col-title { font-size: 0.82rem; font-weight: 700; color: var(--text-bright); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.footer-col a {
+  display: block; font-size: 0.82rem; color: var(--text-dim);
+  padding: 4px 0; transition: color var(--transition);
+}
+.footer-col a:hover { color: var(--text-bright); }
+.footer-bottom {
+  margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);
+  font-size: 0.78rem; color: var(--text-dim); text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   CONTINUE WATCHING ROW
+   ═══════════════════════════════════════════ */
+.cw-card {
+  flex: 0 0 280px; cursor: pointer;
+  position: relative; border-radius: var(--radius-lg);
+  overflow: hidden; background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.cw-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--shadow); }
+.cw-card-inner { display: flex; gap: 14px; padding: 12px; }
+.cw-thumb {
+  width: 80px; height: 110px; border-radius: 8px; object-fit: cover;
+  background: var(--surface2); flex-shrink: 0;
+}
+.cw-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.cw-title { font-size: 0.85rem; font-weight: 700; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+.cw-ep { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px; }
+.cw-progress-bg {
+  width: 100%; height: 4px; background: var(--surface3);
+  border-radius: 2px; overflow: hidden;
+}
+.cw-progress-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.3s; }
+
+/* ═══════════════════════════════════════════
+   LOADING SPINNER
+   ═══════════════════════════════════════════ */
+.spinner {
+  width: 40px; height: 40px; border: 3px solid var(--surface3);
+  border-top-color: var(--primary); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .nav { padding: 0 16px; gap: 12px; }
+  .nav { padding: 0 16px; gap: 10px; }
   .nav-links { display: none; }
+  .hamburger { display: flex; }
   .hero { height: 60vh; min-height: 400px; }
-  .hero-content { left: 16px; right: 16px; bottom: 12%; }
+  .hero-content { left: 16px; right: 16px; bottom: 10%; max-width: none; }
   .hero-actions { flex-direction: column; }
+  .hero-indicators { right: 16px; bottom: 16px; }
   .sections { padding: 0 16px 40px; }
-  .movie-card { flex: 0 0 140px; height: 210px; }
+  .movie-card { flex: 0 0 130px; }
   .detail-content { flex-direction: column; align-items: flex-start; left: 16px; right: 16px; }
-  .detail-poster { width: 140px; }
+  .detail-poster { width: 130px; }
   .detail-episodes { padding: 24px 16px; }
   .episode-grid { grid-template-columns: 1fr; }
-  .search-page { padding: 24px 16px; }
-  .search-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; }
-  .nav-search.active input { width: 200px; }
+  .page-header { padding: 32px 16px 0; }
+  .genre-filters { padding: 0 16px 20px; }
+  .content-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 16px; padding: 0 16px 40px; }
+  .footer { padding: 32px 16px; }
+  .footer-inner { flex-direction: column; }
+  .footer-links { gap: 24px; }
+  .nav-search.active input { width: 180px; }
   .search-dropdown { width: calc(100vw - 32px); right: -16px; }
+  .cw-card { flex: 0 0 260px; }
+  .toast-container { bottom: 16px; right: 16px; left: 16px; }
+}
+
+@media (max-width: 480px) {
+  .movie-card { flex: 0 0 110px; }
+  .content-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+  .hero-title { font-size: 1.6rem; }
 }
 </style>
 </head>
@@ -383,20 +678,42 @@ body {
     <a onclick="navigate('/movies')" data-route="/movies">Movies</a>
     <a onclick="navigate('/tv')" data-route="/tv">TV Series</a>
     <a onclick="navigate('/anime')" data-route="/anime">Animation</a>
+    <a onclick="navigate('/favorites')" data-route="/favorites">
+      ♥ Favorites <span class="fav-count-badge" id="favBadge" style="display:none;">0</span>
+    </a>
   </div>
-  <div class="nav-search" id="nav-search">
-    <input type="text" id="searchInput" placeholder="Search movies, shows..." autocomplete="off">
-    <button class="nav-search-btn" id="searchBtn" onclick="toggleSearch()">🔍</button>
-    <div class="search-dropdown" id="searchDropdown"></div>
+  <div class="nav-right">
+    <div class="nav-search" id="nav-search">
+      <input type="text" id="searchInput" placeholder="Search movies, shows..." autocomplete="off">
+      <button class="icon-btn" id="searchBtn" onclick="toggleSearch()">🔍</button>
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="navigate('/');closeMobile()" data-route="/">Home</a>
+  <a onclick="navigate('/movies');closeMobile()" data-route="/movies">Movies</a>
+  <a onclick="navigate('/tv');closeMobile()" data-route="/tv">TV Series</a>
+  <a onclick="navigate('/anime');closeMobile()" data-route="/anime">Animation</a>
+  <a onclick="navigate('/favorites');closeMobile()" data-route="/favorites">♥ Favorites</a>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
 
 <div id="app"></div>
 
 <script>
 'use strict';
 
-// ─── State ──────────────────────────────
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
 let homeData = null;
 let heroSlides = [];
 let heroIndex = 0;
@@ -405,10 +722,71 @@ let searchTimeout = null;
 let scrollTicking = false;
 const _escEl = document.createElement('div');
 
-// ─── Helpers ────────────────────────────
+// LocalStorage helpers
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem('freebuff_favs') || '[]'); } catch { return []; }
+}
+function saveFavorites(favs) {
+  localStorage.setItem('freebuff_favs', JSON.stringify(favs));
+  updateFavBadge();
+}
+function isFavorite(slug) { return getFavorites().some(f => f.slug === slug); }
+function toggleFavorite(item, e) {
+  if (e) e.stopPropagation();
+  let favs = getFavorites();
+  if (isFavorite(item.slug)) {
+    favs = favs.filter(f => f.slug !== item.slug);
+    toast('💔', 'Removed from favorites');
+  } else {
+    favs.push({ slug: item.slug, name: item.name, poster_url: item.poster_url, rating: item.rating });
+    toast('❤️', 'Added to favorites');
+  }
+  saveFavorites(favs);
+  // Update all fav buttons for this slug
+  document.querySelectorAll('.movie-card-fav[data-slug="' + item.slug + '"], .btn-fav-detail[data-slug="' + item.slug + '"]').forEach(btn => {
+    btn.classList.toggle('active', isFavorite(item.slug));
+    btn.innerHTML = isFavorite(item.slug) ? '♥' : '♡';
+  });
+}
+function updateFavBadge() {
+  const badge = document.getElementById('favBadge');
+  const count = getFavorites().length;
+  if (badge) { badge.style.display = count > 0 ? 'inline-flex' : 'none'; badge.textContent = count; }
+}
+
+function getContinueWatching() {
+  try { return JSON.parse(localStorage.getItem('freebuff_cw') || '[]'); } catch { return []; }
+}
+function saveContinueWatching(slug, name, poster_url, se, ep, progress) {
+  let cw = getContinueWatching();
+  cw = cw.filter(c => !(c.slug === slug && c.se === se && c.ep === ep));
+  cw.unshift({ slug, name, poster_url, se, ep, progress: progress || 0, ts: Date.now() });
+  cw = cw.slice(0, 20); // max 20
+  localStorage.setItem('freebuff_cw', JSON.stringify(cw));
+}
+function getProgressKey(slug, se, ep) {
+  return 'freebuff_progress_' + slug + '_s' + se + 'e' + ep;
+}
+
+// Toast
+function toast(icon, msg) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<span class="toast-icon">' + icon + '</span>' + esc(msg);
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
 function esc(s) { _escEl.textContent = s || ''; return _escEl.innerHTML; }
 
-// ─── Router ─────────────────────────────
+// ═══════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════
 function navigate(path) { window.location.hash = path; }
 function getRoute() { return window.location.hash.slice(1) || '/'; }
 
@@ -417,6 +795,8 @@ window.addEventListener('DOMContentLoaded', () => {
   handleRoute();
   setupNavScroll();
   setupSearch();
+  setupKeyboard();
+  updateFavBadge();
 });
 
 function handleRoute() {
@@ -424,14 +804,17 @@ function handleRoute() {
   const app = document.getElementById('app');
   clearInterval(heroInterval);
 
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    a.classList.toggle('active', a.dataset.route === route);
+  // Update active nav
+  document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a => {
+    const r = a.dataset.route;
+    a.classList.toggle('active', r === route || (r === '/' && (route === '' || route === '/')));
   });
 
   if (route === '/' || route === '') renderHome(app);
   else if (route === '/movies') renderCategory(app, 'Movies', '/movies');
   else if (route === '/tv') renderCategory(app, 'TV Series', '/tv-series');
   else if (route === '/anime') renderCategory(app, 'Animation', '/animation');
+  else if (route === '/favorites') renderFavorites(app);
   else if (route.startsWith('/search/')) renderSearch(app, decodeURIComponent(route.split('/search/')[1]));
   else if (route.startsWith('/movie/')) renderDetail(app, route.split('/movie/')[1]);
   else if (route.startsWith('/watch/')) renderPlayer(app, route.split('/watch/')[1]);
@@ -440,7 +823,9 @@ function handleRoute() {
   window.scrollTo(0, 0);
 }
 
-// ─── Nav scroll (throttled) ─────────────
+// ═══════════════════════════════════════════
+// NAV SCROLL
+// ═══════════════════════════════════════════
 function setupNavScroll() {
   window.addEventListener('scroll', () => {
     if (!scrollTicking) {
@@ -453,7 +838,25 @@ function setupNavScroll() {
   }, { passive: true });
 }
 
-// ─── Search ─────────────────────────────
+// ═══════════════════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════════════════
+function toggleMobile() {
+  const menu = document.getElementById('mobileMenu');
+  const ham = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  ham.classList.toggle('active');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ═══════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════
 function setupSearch() {
   const input = document.getElementById('searchInput');
   const dropdown = document.getElementById('searchDropdown');
@@ -470,6 +873,7 @@ function setupSearch() {
       const q = input.value.trim();
       if (q) { dropdown.classList.remove('show'); navigate('/search/' + encodeURIComponent(q)); }
     }
+    if (e.key === 'Escape') { dropdown.classList.remove('show'); input.blur(); }
   });
 
   input.addEventListener('focus', () => {
@@ -480,7 +884,7 @@ function setupSearch() {
   document.addEventListener('click', (e) => {
     if (!document.getElementById('nav-search').contains(e.target)) {
       dropdown.classList.remove('show');
-      document.getElementById('nav-search').classList.remove('active');
+      if (!input.value) document.getElementById('nav-search').classList.remove('active');
     }
   });
 }
@@ -493,6 +897,7 @@ function toggleSearch() {
     if (q) navigate('/search/' + encodeURIComponent(q));
     ns.classList.remove('active');
     document.getElementById('searchDropdown').classList.remove('show');
+    input.value = '';
   } else {
     ns.classList.add('active');
     input.focus();
@@ -512,7 +917,7 @@ async function fetchSuggestions(q) {
     }
     dropdown.innerHTML = items.slice(0, 8).map(s =>
       '<div class="search-item" onclick="navigate(\'/movie/' + esc(s.slug) + '\');document.getElementById(\'searchDropdown\').classList.remove(\'show\')">' +
-      '<div style="width:40px;height:56px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--text-dim);">🎬</div>' +
+      '<img class="search-item-thumb" src="' + esc(s.poster_url || '') + '" alt="" onerror="this.style.display=\'none\'">' +
       '<div class="search-item-info"><div class="search-item-title">' + esc(s.title) + '</div>' +
       '<div class="search-item-sub">View details →</div></div></div>'
     ).join('');
@@ -520,34 +925,73 @@ async function fetchSuggestions(q) {
   } catch(e) {}
 }
 
-// ─── Skeleton ───────────────────────────
-function skeletonSections() {
-  const card = '<div class="movie-card skeleton-card"><div class="loading-skeleton movie-card-poster"></div></div>';
-  const row = '<div class="movie-row">' + card.repeat(6) + '</div>';
-  return '<div class="section"><div class="section-header"><div class="loading-skeleton" style="width:200px;height:24px;border-radius:6px;"></div></div>' + row + '</div>';
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════
+function setupKeyboard() {
+  document.addEventListener('keydown', (e) => {
+    // Escape: go back or close search
+    if (e.key === 'Escape') {
+      const dropdown = document.getElementById('searchDropdown');
+      if (dropdown && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+        return;
+      }
+      const mobile = document.getElementById('mobileMenu');
+      if (mobile && mobile.classList.contains('open')) { closeMobile(); return; }
+      // If on a sub-page, go home
+      const route = getRoute();
+      if (route !== '/' && route !== '') navigate('/');
+    }
+    // /: focus search
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      const ns = document.getElementById('nav-search');
+      ns.classList.add('active');
+      document.getElementById('searchInput').focus();
+    }
+  });
 }
 
-// ─── Movie Card ─────────────────────────
+// ═══════════════════════════════════════════
+// SKELETON
+// ═══════════════════════════════════════════
+function skeletonSections() {
+  const card = '<div style="flex:0 0 180px;height:270px;border-radius:var(--radius-lg);" class="loading-skeleton"></div>';
+  const row = '<div class="movie-row">' + card.repeat(7) + '</div>';
+  return '<div class="section"><div class="section-header"><div class="loading-skeleton" style="width:200px;height:24px;border-radius:8px;"></div></div>' + row + '</div>';
+}
+
+// ═══════════════════════════════════════════
+// MOVIE CARD
+// ═══════════════════════════════════════════
 function movieCard(item) {
+  const fav = isFavorite(item.slug);
   return '<div class="movie-card" onclick="navigate(\'/movie/' + esc(item.slug) + '\')">' +
-    '<img class="movie-card-poster" src="' + esc(item.poster_url) + '" alt="' + esc(item.name) + '" loading="lazy" decoding="async" width="200" height="300" onerror="this.style.visibility=\'hidden\'">' +
+    '<img class="movie-card-poster" src="' + esc(item.poster_url) + '" alt="' + esc(item.name) + '" loading="lazy" decoding="async" width="180" height="270" onerror="this.style.visibility=\'hidden\'">' +
     (item.badge ? '<div class="movie-card-badge">' + esc(item.badge) + '</div>' : '') +
-    '<div class="movie-card-info"><div class="movie-card-title" title="' + esc(item.name) + '">' + esc(item.name) + '</div>' +
+    '<button class="movie-card-fav' + (fav ? ' active' : '') + '" data-slug="' + esc(item.slug) + '" onclick="toggleFavorite({slug:\'' + esc(item.slug) + '\',name:\'' + esc(item.name) + '\',poster_url:\'' + esc(item.poster_url) + '\',rating:' + (item.rating || 'null') + '},event)">' + (fav ? '♥' : '♡') + '</button>' +
+    '<div class="movie-card-play">▶</div>' +
+    '<div class="movie-card-overlay">' +
+    '<div class="movie-card-title" title="' + esc(item.name) + '">' + esc(item.name) + '</div>' +
     '<div class="movie-card-meta">' +
     (item.rating ? '<span class="movie-card-rating">⭐ ' + item.rating + '</span>' : '') +
     (item.year ? '<span>' + item.year + '</span>' : '') +
     '</div></div></div>';
 }
 
-// ─── HOME PAGE ──────────────────────────
+// ═══════════════════════════════════════════
+// HOME PAGE
+// ═══════════════════════════════════════════
 async function renderHome(app) {
-  app.innerHTML = '<div class="hero" id="hero"></div><div class="sections" id="sections">' + skeletonSections() + '</div>';
+  app.innerHTML = '<div class="hero" id="hero"><div class="spinner" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"></div></div><div class="sections" id="sections">' + skeletonSections() + '</div>';
   try {
     const res = await fetch('/home');
     homeData = await res.json();
     renderHero(homeData.sections);
     renderSections(homeData.sections);
   } catch(e) {
+    document.getElementById('hero').innerHTML = '';
     document.getElementById('sections').innerHTML =
       '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection Error</div><div class="empty-state-desc">Could not load movies. Please try again later.</div></div>';
   }
@@ -590,10 +1034,13 @@ function renderHeroSlide(idx) {
   contentEl.innerHTML =
     (s.badge ? '<div class="hero-badge">' + esc(s.badge) + '</div>' : '') +
     '<h1 class="hero-title">' + esc(s.name || s.title) + '</h1>' +
-    '<div class="hero-meta">' + (s.rating ? '<span class="hero-rating">⭐ ' + s.rating + '</span>' : '') + '</div>' +
+    '<div class="hero-meta">' +
+    (s.rating ? '<span class="hero-rating">⭐ ' + s.rating + '</span><span class="hero-dot-sep"></span>' : '') +
+    (s.year ? '<span>' + s.year + '</span>' : '') +
+    '</div>' +
     '<div class="hero-actions">' +
     '<button class="btn-play" onclick="navigate(\'/movie/' + esc(s.slug) + '\')">▶ Watch Now</button>' +
-    '<button class="btn-info" onclick="navigate(\'/movie/' + esc(s.slug) + '\')">ℹ More Info</button>' +
+    '<button class="btn-secondary" onclick="navigate(\'/movie/' + esc(s.slug) + '\')">ℹ More Info</button>' +
     '</div>';
 }
 
@@ -607,53 +1054,123 @@ function renderIndicators() {
 
 function renderSections(sections) {
   const el = document.getElementById('sections');
-  const filtered = sections.filter(s => s.items && s.items.length > 0);
-  if (!filtered.length) {
+  const cw = getContinueWatching();
+
+  let html = '';
+
+  // Continue Watching row
+  if (cw.length > 0) {
+    html += '<div class="section"><div class="section-header"><h2 class="section-title">⏱ Continue Watching</h2></div>' +
+      '<div class="movie-row">' + cw.map(c =>
+        '<div class="cw-card" onclick="navigate(\'/movie/' + esc(c.slug) + '\')"><div class="cw-card-inner">' +
+        '<img class="cw-thumb" src="' + esc(c.poster_url || '') + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">' +
+        '<div class="cw-info"><div class="cw-title">' + esc(c.name) + '</div>' +
+        '<div class="cw-ep">S' + c.se + ' E' + c.ep + '</div>' +
+        '<div class="cw-progress-bg"><div class="cw-progress-fill" style="width:' + Math.min(c.progress || 10, 100) + '%"></div></div>' +
+        '</div></div></div>'
+      ).join('') + '</div></div>';
+  }
+
+  // Regular sections
+  const filtered = sections.filter(s => s.items && s.items.length > 0 && s.section !== 'Banner');
+  if (filtered.length) {
+    html += filtered.map(sec =>
+      '<div class="section"><div class="section-header"><h2 class="section-title">' + esc(sec.section) + '</h2></div>' +
+      '<div class="movie-row">' + sec.items.map(movieCard).join('') + '</div></div>'
+    ).join('');
+  }
+
+  if (!html) {
     el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎬</div><div class="empty-state-title">No content available</div></div>';
     return;
   }
-  el.innerHTML = filtered.map(sec =>
-    '<div class="section"><div class="section-header"><h2 class="section-title">' + esc(sec.section) + '</h2></div>' +
-    '<div class="movie-row">' + sec.items.map(movieCard).join('') + '</div></div>'
-  ).join('');
+  el.innerHTML = html;
 }
 
-// ─── CATEGORY PAGE ──────────────────────
+// ═══════════════════════════════════════════
+// CATEGORY PAGE
+// ═══════════════════════════════════════════
 async function renderCategory(app, title, apiPath) {
-  const skelCard = '<div class="skeleton-card"><div class="loading-skeleton movie-card-poster" style="width:100%;aspect-ratio:2/3;border-radius:var(--radius);"></div></div>';
-  app.innerHTML = '<div class="search-page"><h1 class="search-page-title">' + title + '</h1><p class="search-page-sub">Browse our collection</p><div class="search-grid" id="catGrid">' + skelCard.repeat(12) + '</div></div>';
+  app.innerHTML =
+    '<div class="page-header"><h1 class="page-title">' + title + '</h1><p class="page-subtitle">Browse our collection</p></div>' +
+    '<div class="genre-filters" id="genreFilters"></div>' +
+    '<div class="content-grid" id="catGrid">' + '<div style="height:200px;" class="loading-skeleton"></div>'.repeat(6) + '</div>';
+
   try {
     const res = await fetch(apiPath);
     const data = await res.json();
     const items = data.items || [];
-    document.getElementById('catGrid').innerHTML = items.length
-      ? items.map(movieCard).join('')
-      : '<div class="empty-state"><div class="empty-state-icon">🎬</div><div class="empty-state-title">No items found</div></div>';
+    const grid = document.getElementById('catGrid');
+
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🎬</div><div class="empty-state-title">No items found</div></div>';
+      return;
+    }
+
+    grid.innerHTML = items.map(movieCard).join('');
+
+    // Add genre chips from items
+    const genres = new Set();
+    items.forEach(i => { if (i.badge) genres.add(i.badge); });
+    if (genres.size) {
+      const filters = document.getElementById('genreFilters');
+      filters.innerHTML = '<button class="genre-chip active" onclick="filterGrid(\'all\',this)">All</button>' +
+        Array.from(genres).map(g => '<button class="genre-chip" onclick="filterGrid(\'' + esc(g) + '\',this)">' + esc(g) + '</button>').join('');
+    }
   } catch(e) {
-    document.getElementById('catGrid').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load</div></div>';
+    document.getElementById('catGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load</div></div>';
   }
 }
 
-// ─── SEARCH PAGE ────────────────────────
+function filterGrid(genre, btn) {
+  document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.content-grid .movie-card').forEach(card => {
+    if (genre === 'all') { card.style.display = ''; return; }
+    const badge = card.querySelector('.movie-card-badge');
+    card.style.display = badge && badge.textContent === genre ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════
+// FAVORITES PAGE
+// ═══════════════════════════════════════════
+function renderFavorites(app) {
+  const favs = getFavorites();
+  if (!favs.length) {
+    app.innerHTML = '<div class="empty-state" style="padding-top:120px;"><div class="empty-state-icon">💔</div><div class="empty-state-title">No favorites yet</div><div class="empty-state-desc">Click the heart icon on any movie to save it here.</div><button class="btn-play" style="margin-top:24px;" onclick="navigate(\'/\')">← Browse Movies</button></div>';
+    return;
+  }
+  app.innerHTML =
+    '<div class="page-header"><h1 class="page-title">♥ Favorites</h1><p class="page-subtitle">' + favs.length + ' saved</p></div>' +
+    '<div class="content-grid">' + favs.map(movieCard).join('') + '</div>';
+}
+
+// ═══════════════════════════════════════════
+// SEARCH PAGE
+// ═══════════════════════════════════════════
 async function renderSearch(app, q) {
-  const skelCard = '<div class="skeleton-card"><div class="loading-skeleton movie-card-poster" style="width:100%;aspect-ratio:2/3;border-radius:var(--radius);"></div></div>';
-  app.innerHTML = '<div class="search-page"><h1 class="search-page-title">Results for "' + esc(q) + '"</h1><p class="search-page-sub">Searching...</p><div class="search-grid" id="searchGrid">' + skelCard.repeat(8) + '</div></div>';
+  app.innerHTML =
+    '<div class="page-header"><h1 class="page-title">Results for "' + esc(q) + '"</h1><p class="page-subtitle">Searching...</p></div>' +
+    '<div class="content-grid" id="searchGrid">' + '<div style="height:240px;" class="loading-skeleton"></div>'.repeat(8) + '</div>';
   try {
     const res = await fetch('/search?q=' + encodeURIComponent(q));
     const data = await res.json();
     const items = data.items || [];
-    document.querySelector('.search-page-sub').textContent = items.length + ' results found';
+    document.querySelector('.page-subtitle').textContent = items.length + ' results found';
     document.getElementById('searchGrid').innerHTML = items.length
       ? items.map(movieCard).join('')
-      : '<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-title">No results</div><div class="empty-state-desc">Try a different keyword</div></div>';
+      : '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><div class="empty-state-title">No results</div><div class="empty-state-desc">Try a different keyword</div></div>';
   } catch(e) {
-    document.getElementById('searchGrid').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Search failed</div></div>';
+    document.getElementById('searchGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Search failed</div></div>';
   }
 }
 
-// ─── DETAIL PAGE ────────────────────────
+// ═══════════════════════════════════════════
+// DETAIL PAGE
+// ═══════════════════════════════════════════
 async function renderDetail(app, slug) {
-  app.innerHTML = '<div class="detail-page"><div class="detail-backdrop"><div class="loading-skeleton" style="width:100%;height:100%;"></div></div><div class="detail-episodes" style="text-align:center;padding:60px;color:var(--text-dim);">Loading...</div></div>';
+  app.innerHTML = '<div class="detail-page"><div class="detail-backdrop"><div class="spinner" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"></div></div><div class="detail-episodes" style="text-align:center;padding:60px;color:var(--text-dim);">Loading...</div></div>';
   try {
     const res = await fetch('/detail/' + slug);
     const data = await res.json();
@@ -668,6 +1185,7 @@ async function renderDetail(app, slug) {
     const episodes = d.episodes || d.episodeList || [];
     const seasons = d.seasons || d.seasonList || [];
     const corner = info.corner || '';
+    const fav = isFavorite(slug);
 
     const placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect fill='%231a1a26' width='200' height='300'/%3E%3C/svg%3E";
 
@@ -675,9 +1193,9 @@ async function renderDetail(app, slug) {
       '<div class="detail-page">' +
       '<div class="detail-backdrop"><img src="' + esc(cover) + '" alt="' + esc(title) + '" decoding="async" onerror="this.style.display=\'none\'"><div class="detail-backdrop-overlay"></div></div>' +
       '<div class="detail-content">' +
-      '<img class="detail-poster" src="' + esc(cover) + '" alt="' + esc(title) + '" decoding="async" onerror="this.src=\'' + placeholder + '\'">' +
+      '<div class="detail-poster-wrap"><img class="detail-poster" src="' + esc(cover) + '" alt="' + esc(title) + '" decoding="async" onerror="this.src=\'' + placeholder + '\'"></div>' +
       '<div class="detail-info">' +
-      (corner ? '<div class="hero-badge" style="margin-bottom:10px;">' + esc(corner) + '</div>' : '') +
+      (corner ? '<div class="hero-badge" style="margin-bottom:12px;">' + esc(corner) + '</div>' : '') +
       '<h1 class="detail-title">' + esc(title) + '</h1>' +
       '<div class="detail-meta">' +
       (rating ? '<span class="detail-rating">⭐ ' + rating + '</span>' : '') +
@@ -686,11 +1204,13 @@ async function renderDetail(app, slug) {
       '<p class="detail-desc">' + esc(desc) + '</p>' +
       '<div class="detail-actions">' +
       (subjectId ? '<button class="btn-play" onclick="startWatch(\'' + esc(subjectId) + '\',\'' + esc(slug) + '\',1,1)">▶ Play Episode 1</button>' : '') +
+      '<button class="btn-fav-detail' + (fav ? ' active' : '') + '" data-slug="' + esc(slug) + '" onclick="toggleFavorite({slug:\'' + esc(slug) + '\',name:\'' + esc(title) + '\',poster_url:\'' + esc(cover) + '\',rating:' + (rating || 'null') + '})">' + (fav ? '♥' : '♡') + ' ' + (fav ? 'In Favorites' : 'Add to Favorites') + '</button>' +
       '</div></div></div>' +
       renderEpisodes(episodes, seasons, subjectId, slug) +
+      '<div class="footer"><div class="footer-inner"><div><div class="footer-brand">Free<span>buff</span></div><div class="footer-text">Watch movies and TV shows from the comfort of your home. Free streaming, zero hassle.</div></div><div class="footer-links"><div class="footer-col"><div class="footer-col-title">Browse</div><a onclick="navigate(\'/\')">Home</a><a onclick="navigate(\'/movies\')">Movies</a><a onclick="navigate(\'/tv\')">TV Series</a><a onclick="navigate(\'/anime\')">Animation</a></div><div class="footer-col"><div class="footer-col-title">Features</div><a onclick="navigate(\'/favorites\')">Favorites</a><a href="#">Search</a><a href="#">Keyboard Shortcuts</a></div></div></div><div class="footer-bottom">© 2026 Freebuff. All rights reserved.</div></div>' +
       '</div>';
   } catch(e) {
-    app.innerHTML = '<div class="empty-state" style="padding-top:120px;"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load</div><button class="btn-play" style="margin-top:20px;" onclick="navigate(\'/\')">← Back Home</button></div>';
+    app.innerHTML = '<div class="empty-state" style="padding-top:120px;"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load</div><button class="btn-play" style="margin-top:24px;" onclick="navigate(\'/\')">← Back Home</button></div>';
   }
 }
 
@@ -713,7 +1233,7 @@ function renderEpisodes(episodes, seasons, subjectId, slug) {
         '</div><div class="episode-play-icon">▶</div></div>';
     }).join('');
 
-    return '<div class="detail-episodes"><h3 class="episodes-title">Episodes</h3><div class="season-tabs" id="seasonTabs">' + seasonTabs + '</div><div class="episode-grid" id="episodeGrid">' + episodeCards + '</div></div>';
+    return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3></div><div class="season-tabs" id="seasonTabs">' + seasonTabs + '</div><div class="episode-grid" id="episodeGrid">' + episodeCards + '</div></div>';
   }
 
   const episodeCards = episodes.map(ep => {
@@ -726,7 +1246,7 @@ function renderEpisodes(episodes, seasons, subjectId, slug) {
       '</div><div class="episode-play-icon">▶</div></div>';
   }).join('');
 
-  return '<div class="detail-episodes"><h3 class="episodes-title">Episodes</h3><div class="episode-grid">' + episodeCards + '</div></div>';
+  return '<div class="detail-episodes"><div class="episodes-header"><h3 class="episodes-title">Episodes</h3></div><div class="episode-grid">' + episodeCards + '</div></div>';
 }
 
 function filterSeason(btn, season) {
@@ -741,7 +1261,9 @@ function startWatch(subjectId, slug, se, ep) {
   navigate('/watch/' + subjectId + '?slug=' + encodeURIComponent(slug) + '&se=' + se + '&ep=' + ep);
 }
 
-// ─── PLAYER PAGE ────────────────────────
+// ═══════════════════════════════════════════
+// PLAYER PAGE
+// ═══════════════════════════════════════════
 async function renderPlayer(app, params) {
   const parts = params.split('?');
   const subjectId = parts[0];
@@ -750,7 +1272,7 @@ async function renderPlayer(app, params) {
   const se = parseInt(qs.get('se') || '1');
   const ep = parseInt(qs.get('ep') || '1');
 
-  app.innerHTML = '<div class="player-page"><div class="player-header"><button class="player-back" onclick="history.back()">←</button><span class="player-title">Loading stream...</span></div><div class="player-video-wrap" style="min-height:60vh;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;color:var(--text-dim);"><div style="font-size:2rem;margin-bottom:12px;">⏳</div><div>Loading video...</div></div></div></div>';
+  app.innerHTML = '<div class="player-page"><div class="player-header"><button class="player-back" onclick="history.back()">←</button><span class="player-title">Loading stream...</span></div><div class="player-video-wrap" style="min-height:60vh;"><div class="spinner"></div></div></div>';
 
   try {
     const res = await fetch('/api/stream/' + subjectId + '?detail_path=' + encodeURIComponent(slug) + '&se=' + se + '&ep=' + ep);
@@ -773,9 +1295,27 @@ async function renderPlayer(app, params) {
       if (sorted.length) videoSrc = sorted[0].url;
     }
 
-    titleEl.textContent = 'S' + se + ' E' + ep;
-    videoWrap.innerHTML = '<video id="videoPlayer" controls autoplay playsinline preload="auto" style="width:100%;max-height:80vh;background:#000;"><source src="' + esc(videoSrc) + '" type="video/mp4"></video>';
+    titleEl.textContent = slug.replace(/.*\//, '').replace(/-/g, ' ') + ' — S' + se + ' E' + ep;
 
+    // Save to continue watching
+    saveContinueWatching(slug, slug.split('/').pop().replace(/-/g, ' '), '', se, ep, 0);
+
+    videoWrap.innerHTML = '<video id="videoPlayer" controls autoplay playsinline preload="auto" style="width:100%;max-height:82vh;background:#000;outline:none;"><source src="' + esc(videoSrc) + '" type="video/mp4"></video>';
+
+    // Track progress
+    const video = document.getElementById('videoPlayer');
+    if (video) {
+      video.addEventListener('timeupdate', () => {
+        if (video.duration) {
+          const progress = Math.round((video.currentTime / video.duration) * 100);
+          if (progress % 10 === 0 && progress > 0) {
+            saveContinueWatching(slug, slug.split('/').pop().replace(/-/g, ' '), '', se, ep, progress);
+          }
+        }
+      });
+    }
+
+    // Quality selector
     if (sources.length > 1) {
       const infoBar = document.createElement('div');
       infoBar.className = 'player-info-bar';
@@ -785,10 +1325,10 @@ async function renderPlayer(app, params) {
         ).join('') + '</div>';
       app.querySelector('.player-page').appendChild(infoBar);
       const chips = infoBar.querySelectorAll('.quality-chip');
-      if (chips.length) chips[chips.length - 1].classList.add('active');
+      if (chips.length) chips[0].classList.add('active');
     }
   } catch(e) {
-    app.innerHTML = '<div class="player-page"><div class="player-header"><button class="player-back" onclick="history.back()">←</button><span class="player-title">Stream Error</span></div><div class="player-video-wrap" style="min-height:60vh;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;color:var(--text-dim);padding:40px;"><div style="font-size:3rem;margin-bottom:16px;">⚠️</div><div style="font-size:1.1rem;font-weight:600;color:var(--text-bright);margin-bottom:8px;">Could not load stream</div><button class="btn-play" style="margin-top:24px;" onclick="history.back()">← Go Back</button></div></div></div>';
+    app.innerHTML = '<div class="player-page"><div class="player-header"><button class="player-back" onclick="history.back()">←</button><span class="player-title">Stream Error</span></div><div class="player-video-wrap" style="min-height:60vh;"><div style="text-align:center;color:var(--text-dim);padding:40px;"><div style="font-size:3rem;margin-bottom:16px;">⚠️</div><div style="font-size:1.1rem;font-weight:600;color:var(--text-bright);margin-bottom:8px;">Could not load stream</div><button class="btn-play" style="margin-top:24px;" onclick="history.back()">← Go Back</button></div></div></div>';
   }
 }
 
