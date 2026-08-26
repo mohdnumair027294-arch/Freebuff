@@ -175,17 +175,20 @@ async def get_animation(page: int = 1, sort: str = "RECOMMEND"):
 
 @app.get("/search/suggest")
 async def get_search_suggestions(q: str = Query(..., min_length=1)):
-    url = f"{API_BASE}/subject/search-suggest"
-    data = await _make_request(url, method="POST", payload={"keyword": q, "perPage": 10})
+    """Use full search API (suggest endpoint only returns keywords, no posters/slugs)."""
+    url = f"{API_BASE}/subject/search"
+    data = await _make_request(url, method="POST", payload={"keyword": q, "page": 1, "perPage": 8})
     inner = data.get("data", {})
     raw = inner.get("items", inner.get("list", []))
     suggestions = []
-    for item in raw:
-        sub = item.get("subject") or {}
+    for sub in raw:
         suggestions.append({
-            "title": sub.get("title") or item.get("word") or item.get("title"),
-            "slug": sub.get("detailPath") or item.get("detailPath"),
-            "subject_id": sub.get("subjectId") or item.get("subjectId")
+            "title": sub.get("title"),
+            "slug": sub.get("detailPath"),
+            "subject_id": sub.get("subjectId"),
+            "poster_url": (sub.get("cover") or {}).get("url", ""),
+            "year": (sub.get("releaseDate") or "")[:4] if sub.get("releaseDate") else None,
+            "rating": sub.get("imdbRatingValue"),
         })
     return {"suggestions": suggestions}
 
@@ -195,12 +198,18 @@ async def search(q: str = Query(..., min_length=1), page: int = 1):
     data = await _make_request(url, method="POST", payload={"keyword": q, "page": page, "perPage": 20})
     inner = data.get("data", {})
     raw = inner.get("items", inner.get("list", []))
-    items = [{
-        "name": sub.get("title"),
-        "poster_url": sub.get("cover", {}).get("url"),
-        "slug": sub.get("detailPath"),
-        "subject_id": sub.get("subjectId")
-    } for sub in raw]
+    items = []
+    for sub in raw:
+        cover = sub.get("cover") or {}
+        items.append({
+            "name": sub.get("title"),
+            "poster_url": cover.get("url", ""),
+            "slug": sub.get("detailPath"),
+            "subject_id": sub.get("subjectId"),
+            "rating": sub.get("imdbRatingValue"),
+            "year": (sub.get("releaseDate") or "")[:4] if sub.get("releaseDate") else None,
+            "badge": sub.get("corner"),
+        })
     pager = inner.get("pager", {})
     total = pager.get("totalCount") or inner.get("total") or len(items)
     return {"query": q, "page": page, "total": total, "items": items}
@@ -208,7 +217,67 @@ async def search(q: str = Query(..., min_length=1), page: int = 1):
 @app.get("/detail/{slug}")
 async def get_movie_detail(slug: str):
     url = f"{API_BASE}/detail?detailPath={slug}"
-    return await _make_request(url)
+    raw = await _make_request(url)
+    data = raw.get("data", raw)
+    subj = data.get("subject", {})
+
+    # Normalize genres (comma-separated string → list)
+    genre_raw = subj.get("genre", "")
+    if isinstance(genre_raw, list):
+        genres = [g if isinstance(g, str) else g.get("name", "") for g in genre_raw]
+    else:
+        genres = [g.strip() for g in genre_raw.split(",") if g.strip()]
+
+    # Build episode list from resource.seasons
+    resource = data.get("resource", {})
+    seasons_raw = resource.get("seasons", [])
+    seasons = []
+    episodes = []
+    for s in seasons_raw:
+        se_num = s.get("se", 1)
+        max_ep = s.get("maxEp", 0)
+        seasons.append({"seasonNumber": se_num, "number": se_num, "episodeCount": max_ep})
+        for ep_num in range(1, max_ep + 1):
+            eps_id = f"{subj.get('subjectId', '')}_{se_num}_{ep_num}"
+            episodes.append({
+                "episodeNumber": ep_num,
+                "number": ep_num,
+                "seasonNumber": se_num,
+                "title": f"Episode {ep_num}",
+                "duration": "",
+                "durationText": "",
+            })
+
+    # Staff/cast
+    staff = data.get("stars", [])
+    cast = [{"name": s.get("name"), "character": s.get("character"), "avatar": s.get("avatarUrl")} for s in staff[:12]]
+
+    return {
+        "data": {
+            "info": {
+                "subjectId": subj.get("subjectId"),
+                "title": subj.get("title"),
+                "description": subj.get("description", ""),
+                "cover": subj.get("cover", {}),
+                "coverImage": (subj.get("cover") or {}).get("url", ""),
+                "imdbRatingValue": subj.get("imdbRatingValue", ""),
+                "rating": subj.get("imdbRatingValue", ""),
+                "genres": genres,
+                "releaseDate": subj.get("releaseDate", ""),
+                "year": (subj.get("releaseDate") or "")[:4],
+                "countryName": subj.get("countryName", ""),
+                "corner": subj.get("corner", ""),
+                "subjectType": subj.get("subjectType"),
+                "hasResource": subj.get("hasResource", False),
+                "trailer": subj.get("trailer", {}),
+                "detailPath": subj.get("detailPath", slug),
+            },
+            "seasons": seasons,
+            "episodes": episodes,
+            "cast": cast,
+            "related": [item.get("subject", item) for item in (data.get("postList", {}).get("items", []))[:10]],
+        }
+    }
 
 @app.get("/api/stream/{subject_id}")
 async def get_stream_sources(subject_id: str, detail_path: str, se: int = 1, ep: int = 1):

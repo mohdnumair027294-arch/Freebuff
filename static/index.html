@@ -915,11 +915,11 @@ async function fetchSuggestions(q) {
       dropdown.classList.add('show');
       return;
     }
-    dropdown.innerHTML = items.slice(0, 8).map(s =>
+    dropdown.innerHTML = items.slice(0, 8).filter(s => s.slug).map(s =>
       '<div class="search-item" onclick="navigate(\'/movie/' + esc(s.slug) + '\');document.getElementById(\'searchDropdown\').classList.remove(\'show\')">' +
-      '<img class="search-item-thumb" src="' + esc(s.poster_url || '') + '" alt="" onerror="this.style.display=\'none\'">' +
+      '<img class="search-item-thumb" src="' + esc(s.poster_url || '') + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
       '<div class="search-item-info"><div class="search-item-title">' + esc(s.title) + '</div>' +
-      '<div class="search-item-sub">View details →</div></div></div>'
+      '<div class="search-item-sub">' + (s.rating ? '⭐ ' + s.rating + (s.year ? ' · ' + s.year : '') : 'View details →') + '</div></div></div>'
     ).join('');
     dropdown.classList.add('show');
   } catch(e) {}
