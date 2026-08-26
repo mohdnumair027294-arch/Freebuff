@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Freebuff - Watch Movies at Home</title>
+<title>Watchflix - Watch Movies at Home</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -672,7 +672,7 @@ button { font-family: inherit; }
 
 <!-- ════════════════ NAV ════════════════ -->
 <nav class="nav" id="navbar">
-  <a class="nav-logo" onclick="navigate('/')">Free<span>buff</span></a>
+  <a class="nav-logo" onclick="navigate('/')">Watch<span>flix</span></a>
   <div class="nav-links" id="nav-links">
     <a onclick="navigate('/')" data-route="/">Home</a>
     <a onclick="navigate('/movies')" data-route="/movies">Movies</a>
@@ -724,10 +724,10 @@ const _escEl = document.createElement('div');
 
 // LocalStorage helpers
 function getFavorites() {
-  try { return JSON.parse(localStorage.getItem('freebuff_favs') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem('watchflix_favs') || '[]'); } catch { return []; }
 }
 function saveFavorites(favs) {
-  localStorage.setItem('freebuff_favs', JSON.stringify(favs));
+  localStorage.setItem('watchflix_favs', JSON.stringify(favs));
   updateFavBadge();
 }
 function isFavorite(slug) { return getFavorites().some(f => f.slug === slug); }
@@ -755,17 +755,17 @@ function updateFavBadge() {
 }
 
 function getContinueWatching() {
-  try { return JSON.parse(localStorage.getItem('freebuff_cw') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem('watchflix_cw') || '[]'); } catch { return []; }
 }
 function saveContinueWatching(slug, name, poster_url, se, ep, progress) {
   let cw = getContinueWatching();
   cw = cw.filter(c => !(c.slug === slug && c.se === se && c.ep === ep));
   cw.unshift({ slug, name, poster_url, se, ep, progress: progress || 0, ts: Date.now() });
   cw = cw.slice(0, 20); // max 20
-  localStorage.setItem('freebuff_cw', JSON.stringify(cw));
+  localStorage.setItem('watchflix_cw', JSON.stringify(cw));
 }
 function getProgressKey(slug, se, ep) {
-  return 'freebuff_progress_' + slug + '_s' + se + 'e' + ep;
+  return 'watchflix_progress_' + slug + '_s' + se + 'e' + ep;
 }
 
 // Toast
@@ -1207,7 +1207,7 @@ async function renderDetail(app, slug) {
       '<button class="btn-fav-detail' + (fav ? ' active' : '') + '" data-slug="' + esc(slug) + '" onclick="toggleFavorite({slug:\'' + esc(slug) + '\',name:\'' + esc(title) + '\',poster_url:\'' + esc(cover) + '\',rating:' + (rating || 'null') + '})">' + (fav ? '♥' : '♡') + ' ' + (fav ? 'In Favorites' : 'Add to Favorites') + '</button>' +
       '</div></div></div>' +
       renderEpisodes(episodes, seasons, subjectId, slug) +
-      '<div class="footer"><div class="footer-inner"><div><div class="footer-brand">Free<span>buff</span></div><div class="footer-text">Watch movies and TV shows from the comfort of your home. Free streaming, zero hassle.</div></div><div class="footer-links"><div class="footer-col"><div class="footer-col-title">Browse</div><a onclick="navigate(\'/\')">Home</a><a onclick="navigate(\'/movies\')">Movies</a><a onclick="navigate(\'/tv\')">TV Series</a><a onclick="navigate(\'/anime\')">Animation</a></div><div class="footer-col"><div class="footer-col-title">Features</div><a onclick="navigate(\'/favorites\')">Favorites</a><a href="#">Search</a><a href="#">Keyboard Shortcuts</a></div></div></div><div class="footer-bottom">© 2026 Freebuff. All rights reserved.</div></div>' +
+      '<div class="footer"><div class="footer-inner"><div><div class="footer-brand">Watch<span>flix</span></div><div class="footer-text">Watch movies and TV shows from the comfort of your home. Free streaming, zero hassle.</div></div><div class="footer-links"><div class="footer-col"><div class="footer-col-title">Browse</div><a onclick="navigate(\'/\')">Home</a><a onclick="navigate(\'/movies\')">Movies</a><a onclick="navigate(\'/tv\')">TV Series</a><a onclick="navigate(\'/anime\')">Animation</a></div><div class="footer-col"><div class="footer-col-title">Features</div><a onclick="navigate(\'/favorites\')">Favorites</a><a href="#">Search</a><a href="#">Keyboard Shortcuts</a></div></div></div><div class="footer-bottom">© 2026 Watchflix. All rights reserved.</div></div>' +
       '</div>';
   } catch(e) {
     app.innerHTML = '<div class="empty-state" style="padding-top:120px;"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load</div><button class="btn-play" style="margin-top:24px;" onclick="navigate(\'/\')">← Back Home</button></div>';

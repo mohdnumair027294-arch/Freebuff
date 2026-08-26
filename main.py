@@ -9,9 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 
 app = FastAPI(
-    title="MovieBox API Pro",
-    description="Full Pure REST API for moviebox.ph — Zero Scraping",
-    version="2.1.5"
+    title="Watchflix",
+    description="Watch movies and TV shows from home — free streaming",
+    version="1.0.0"
 )
 
 app.add_middleware(
