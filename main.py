@@ -128,7 +128,7 @@ async def get_home():
                 "slug": item.get("detailPath") or (item.get("subject") or {}).get("detailPath"),
                 "subject_id": (item.get("subject") or {}).get("subjectId"),
                 "badge": (item.get("subject") or {}).get("corner")
-            } for item in op.get("banner", {}).get("items", []) if item.get("title") and "Communities" not in item.get("title")]
+            } for item in op.get("banner", {}).get("items", []) if (item.get("title") or (item.get("subject") or {}).get("title")) and "Communities" not in (item.get("title") or "")]
             sections.append({"section": "Banner", "count": len(items), "items": items})
         elif op_type in ["SUBJECTS_MOVIE", "SUBJECTS_TV", "SUBJECTS_ANIMATION"]:
             items = [{

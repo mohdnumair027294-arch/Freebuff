@@ -1224,7 +1224,7 @@ async function renderDetail(app, slug) {
     const data = await res.json();
     const d = data.data || data;
     const info = d.info || d;
-    const title = info.title || info.name || 'Unknown';
+    const title = info.title || info.name || (slug ? slug.replace(/.*\//, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Unknown');
     const cover = (info.cover || {}).url || (info.coverImage || '') || '';
     const rating = info.imdbRatingValue || info.rating || '';
     const genres = (info.genres || []).map(g => typeof g === 'string' ? g : g.name || '').filter(Boolean);
