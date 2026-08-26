@@ -292,8 +292,13 @@ async def get_stream_sources(subject_id: str, detail_path: str, se: int = 1, ep:
     )
     play_url = f"{domain}/wefeed-h5api-bff/subject/play?subjectId={subject_id}&se={se}&ep={ep}&detailPath={detail_path}"
 
+    token = await _get_bearer_token()
+    play_headers = {**PLAYER_HEADERS, "Referer": player_referer}
+    if token:
+        play_headers["Authorization"] = f"Bearer {token}"
+
     async with httpx.AsyncClient(follow_redirects=True, timeout=25) as client:
-        resp = await client.get(play_url, headers={**PLAYER_HEADERS, "Referer": player_referer})
+        resp = await client.get(play_url, headers=play_headers)
         data = resp.json().get("data", {})
 
     has_resource = data.get("hasResource", False)
